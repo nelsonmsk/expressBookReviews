@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -21,41 +22,69 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
+public_users.get('/', async function (req, res) {
   res.send(JSON.stringify(books,null,10));
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async(req, res)=>{
     const isbn = req.params.isbn;
-    let booklist = books[isbn];
-    if(booklist){
-        res.send(booklist);
-    }else{
-        return res.status(400).json({message: "Books not found!"});
-    }
+    await new Promise((resolve,reject)=>{
+		let booklist = {};
+		try{
+			if(Object.hasOwn(books, isbn)){
+				booklist = books[isbn];
+			}       
+		   resolve(booklist);
+	    } catch(err) {
+			reject(err);
+		}
+	 }).then(
+			(booklist) => res.send(booklist),
+			(err) => {return res.status(404).json({message: "Book not found!"})}
+	);
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author',(req, res)=>{
     const author = req.params.author;
-    let booklist = books[author];
-    if(booklist){
-         res.send(booklist);
-    }else{
-        return res.status(400).json({message: "Books not found!"});
-    }
+    new Promise((resolve,reject)=>{
+		let filtered_book = {};
+		try{
+			for (const book of Object.values(books)){
+				if(book.author === author){
+					 filtered_book = book;
+				}       
+			}
+		   resolve(filtered_book);
+	    } catch(err) {
+			reject(err);
+		}
+	 }).then(
+			(filtered_book) => res.send(filtered_book),
+			(err) => {return res.status(404).json({message: "Book not found!"})}
+	);
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title',async (req, res)=>{
     const title = req.params.title;
-    let booklist = books[title];
-    if(booklist){        
-       res.send(booklist);
-    }else{
-        return res.status(400).json({message: "Books not found!"});
-    }
+    await new Promise((resolve,reject)=>{
+		let filtered_book = {};
+		try{
+			for (const book of Object.values(books)){
+				if(book.title === title){
+					 filtered_book = book;
+				}       
+			}
+		   resolve(filtered_book);
+	    } catch(err) {
+			reject(err);
+		}
+	 }).then(
+			(filtered_book) => res.send(filtered_book),
+			(err) => {return res.status(404).json({message: "Book not found!"})}
+	);
 });
 
 //  Get book review
