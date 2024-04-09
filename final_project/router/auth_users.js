@@ -28,17 +28,17 @@ const authenticatedUser = (username,password)=>{ //returns boolean
         return false;
     }
 }
+
 regd_users.get("/:username",(req,res)=>{
     const username = req.params.username;
     if(Object.hasOwn(users, username)){
      res.send(users[username]);
     }else{
-      res.send (users);
-        // return res.status(404).json({message: "User not found"});
+        return res.status(404).json({message: "User not found"});
     }
 });
 
-//only registered users can login
+// Task 7 : only registered users can login
 regd_users.post("/login", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -63,7 +63,7 @@ regd_users.post("/login", (req,res) => {
     }
 });
 
-// Add a book review
+// Task 8: Add or modify a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const review = req.params.review;
@@ -85,6 +85,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     }
 });
 
+//Task 9 : Delete a review based on username and isbn
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
 	const username = req.user.username;

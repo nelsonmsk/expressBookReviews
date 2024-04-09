@@ -5,7 +5,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
+//Task 6 : Register a new user
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
   const password = req.body.password;
@@ -21,12 +21,12 @@ public_users.post("/register", (req,res) => {
   return res.status(404).json({message: "Unable to register user."});
 });
 
-// Get the book list available in the shop
+// Task 1 & 10 : Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   res.send(JSON.stringify(books,null,10));
 });
 
-// Get book details based on ISBN
+// Task 2 & 11 : Get book details based on ISBN
 public_users.get('/isbn/:isbn', async(req, res)=>{
     const isbn = req.params.isbn;
     await new Promise((resolve,reject)=>{
@@ -45,7 +45,7 @@ public_users.get('/isbn/:isbn', async(req, res)=>{
 	);
  });
   
-// Get book details based on author
+//Task 3 & 12 : Get book details based on author
 public_users.get('/author/:author',(req, res)=>{
     const author = req.params.author;
     new Promise((resolve,reject)=>{
@@ -66,7 +66,7 @@ public_users.get('/author/:author',(req, res)=>{
 	);
 });
 
-// Get all books based on title
+// Task 4 & 13 : Get all books based on title
 public_users.get('/title/:title',async (req, res)=>{
     const title = req.params.title;
     await new Promise((resolve,reject)=>{
@@ -87,7 +87,7 @@ public_users.get('/title/:title',async (req, res)=>{
 	);
 });
 
-//  Get book review
+// Task 5 : Get book review
 public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     let booklist = books[isbn];
